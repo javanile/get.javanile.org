@@ -1,4 +1,4 @@
-# Javanile Installer
+# Javanile App Installer
 
 This is the offical Javanile Installer
 
