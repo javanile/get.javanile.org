@@ -5,7 +5,6 @@ bin=/usr/local/bin/mush
 chmod=chmod
 curl=curl
 
-
 if [ "$EUID" -ne 0 ]; then
     echo "To install '${bin}' file you need root privileges"
     curl="sudo ${curl}"
