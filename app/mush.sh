@@ -15,5 +15,5 @@ fi
 ${curl} -sL https://github.com/javanile/mush/releases/download/${version}/mush -o ${bin}
 ${chmod} +x ${bin}
 
-echo -n "Installed "
+echo "Installed "
 mush --version
