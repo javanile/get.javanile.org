@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+version=0.1.0
 bin=/usr/local/bin/mush
 chmod=chmod
 curl=curl
@@ -11,7 +12,7 @@ if [ ! "$EUID" = "0" ]; then
     chmod="sudo ${chmod}"
 fi
 
-${curl} -sL https://raw.githubusercontent.com/javanile/mush/main/bin/mush -o ${bin}
+${curl} -sL https://github.com/javanile/mush/releases/download/${version}/mush -o ${bin}
 ${chmod} +x ${bin}
 
 echo -n "Installed "
