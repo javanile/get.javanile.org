@@ -12,8 +12,6 @@ fi
 # Cloning to $RSVM_TARGET
 git clone git://github.com/sdepold/rsvm.git $RSVM_TARGET
 
-echo
-
 # Detect profile file, .bash_profile has precedence over .profile
 if [ ! -z "$1" ]; then
   PROFILE="$1"
