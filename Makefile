@@ -21,3 +21,6 @@ remote-sudo-bash: remote-init
 
 test-docker-remote:
 	@cat app/docker.sh | make -s remote-sudo-bash
+
+test-404:
+	@cat 404.html | sh
