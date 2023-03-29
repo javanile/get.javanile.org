@@ -1,6 +1,6 @@
 # Javanile App Installer
 
-This is the offical Javanile's applications installer
+This is the offical Javanile's applications installer and runner
 
 ```shell
 $ curl get.javanile.org/{APP} | sh
