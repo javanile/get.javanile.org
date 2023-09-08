@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-version=0.1.0
+version=0.1.1
 bin=/usr/local/bin/mush
 chmod=chmod
 curl=curl
