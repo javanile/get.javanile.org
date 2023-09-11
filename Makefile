@@ -24,3 +24,6 @@ test-docker-remote:
 
 test-404:
 	@cat 404.html | sh
+
+test-install:
+	@bash tests/install-test.sh

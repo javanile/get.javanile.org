@@ -53,68 +53,24 @@ if [[ $# -gt 2 ]]; then
     error 'Too many arguments, only 2 are allowed. The first can be a specific tag of bun to install. (e.g. "bun-v0.1.4") The second can be a build variant of bun to install. (e.g. "debug-info")'
 fi
 
-case $(uname -ms) in
-    'Darwin x86_64')
-        target=darwin-x64
-        ;;
-    'Darwin arm64')
-        target=darwin-aarch64
-        ;;
-    'Linux aarch64' | 'Linux arm64')
-        target=linux-aarch64
-        ;;
-    'Linux x86_64' | *)
-        target=linux-x64
-        ;;
-esac
-
-if [[ $target = darwin-x64 ]]; then
-    # Is this process running in Rosetta?
-    # redirect stderr to devnull to avoid error message when not running in Rosetta
-    if [[ $(sysctl -n sysctl.proc_translated 2>/dev/null) = 1 ]]; then
-        target=darwin-aarch64
-        info "Your shell is running in Rosetta 2. Downloading bun for $target instead"
-    fi
-fi
-
 GITHUB=${GITHUB-"https://github.com"}
 
 github_repo="$GITHUB/javanile/$1"
 
-if [[ $target = darwin-x64 ]]; then
-    # If AVX2 isn't supported, use the -baseline build
-    if [[ $(sysctl -a | grep machdep.cpu | grep AVX2) == '' ]]; then
-        target=darwin-x64-baseline
-    fi
-fi
-
-if [[ $target = linux-x64 ]]; then
-    # If AVX2 isn't supported, use the -baseline build
-    if [[ $(cat /proc/cpuinfo | grep avx2) = '' ]]; then
-        target=linux-x64-baseline
-    fi
-fi
-
 exe_name=$1
 
-if [[ $# = 2 && $2 = debug-info ]]; then
-    target=$target-profile
-    exe_name=bun-profile
-    info "You requested a debug build of bun. More information will be shown if a crash occurs."
-fi
-
 if [[ $# = 0 ]]; then
-    bun_uri=$github_repo/releases/latest/download/bun-$target.zip
+    bun_uri=$github_repo/releases/latest/download/$1
 else
-    bun_uri=$github_repo/releases/download/$1/bun-$target.zip
+    bun_uri=$github_repo/releases/download/$2/$1
 fi
 
 install_env=BUN_INSTALL
 bin_env=\$$install_env/bin
 
-install_dir=${!install_env:-$HOME/.bun}
+install_dir=${!install_env:-$HOME/.$1}
 bin_dir=$install_dir/bin
-exe=$bin_dir/bun
+exe=$bin_dir/$1
 
 if [[ ! -d $bin_dir ]]; then
     mkdir -p "$bin_dir" ||
@@ -122,7 +78,7 @@ if [[ ! -d $bin_dir ]]; then
 fi
 
 curl --fail --location --progress-bar --output "$exe.zip" "$bun_uri" ||
-    error "Failed to download bun from \"$bun_uri\""
+    error "Failed to download $1 from \"$bun_uri\""
 
 unzip -oqd "$bin_dir" "$exe.zip" ||
     error 'Failed to extract bun'
