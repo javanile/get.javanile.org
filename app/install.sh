@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+app=$1
+tag=${2:-}
+
 if [[ ${OS:-} = Windows_NT ]]; then
-    echo "error: Please install $1 using Windows Subsystem for Linux"
+    echo "error: Please install $app using Windows Subsystem for Linux"
     exit 1
 fi
 
@@ -50,46 +53,38 @@ success() {
 }
 
 if [[ $# -gt 2 ]]; then
-    error 'Too many arguments, only 2 are allowed. The first can be a specific tag of bun to install. (e.g. "bun-v0.1.4") The second can be a build variant of bun to install. (e.g. "debug-info")'
+    error "Too many arguments, only 2 are allowed. The first can be a specific tag of $app to install. (e.g. \"$app-v0.1.4\") The second can be a build variant of $app to install. (e.g. \"debug-info\")"
 fi
 
 GITHUB=${GITHUB-"https://github.com"}
 
-github_repo="$GITHUB/javanile/$1"
+github_repo="$GITHUB/javanile/$app"
 
-exe_name=$1
+exe_name=$app
 
-if [[ $# = 0 ]]; then
-    bun_uri=$github_repo/releases/latest/download/$1
+if [[ $# = 1 ]]; then
+    app_uri=$github_repo/releases/latest/download/$app
 else
-    bun_uri=$github_repo/releases/download/$2/$1
+    app_uri=$github_repo/releases/download/$tag/$app
 fi
 
-install_env=BUN_INSTALL
+install_env=$(echo "$app" | tr '[:lower:]' '[:upper:]')_INSTALL
 bin_env=\$$install_env/bin
 
-install_dir=${!install_env:-$HOME/.$1}
+install_dir=${!install_env:-$HOME/.$app}
 bin_dir=$install_dir/bin
-exe=$bin_dir/$1
+exe=$bin_dir/$app
 
 if [[ ! -d $bin_dir ]]; then
     mkdir -p "$bin_dir" ||
         error "Failed to create install directory \"$bin_dir\""
 fi
 
-curl --fail --location --progress-bar --output "$exe.zip" "$bun_uri" ||
-    error "Failed to download $1 from \"$bun_uri\""
-
-unzip -oqd "$bin_dir" "$exe.zip" ||
-    error 'Failed to extract bun'
-
-mv "$bin_dir/bun-$target/$exe_name" "$exe" ||
-    error 'Failed to move extracted bun to destination'
+curl --fail --location --progress-bar --output "$exe" "$app_uri" ||
+    error "Failed to download $app from \"$app_uri\""
 
 chmod +x "$exe" ||
     error 'Failed to set permissions on bun executable'
-
-rm -r "$bin_dir/bun-$target" "$exe.zip"
 
 tildify() {
     if [[ $1 = $HOME/* ]]; then
@@ -101,13 +96,13 @@ tildify() {
     fi
 }
 
-success "bun was installed successfully to $Bold_Green$(tildify "$exe")"
+success "$app was installed successfully to $Bold_Green$(tildify "$exe")"
 
-if command -v bun >/dev/null; then
+if command -v $app >/dev/null; then
     # Install completions, but we don't care if it fails
     IS_BUN_AUTO_UPDATE=true $exe completions &>/dev/null || :
 
-    echo "Run 'bun --help' to get started"
+    echo "Run '$app --help' to get started"
     exit
 fi
 
@@ -254,4 +249,4 @@ if [[ $refresh_command ]]; then
     info_bold "  $refresh_command"
 fi
 
-info_bold "  $1 --help"
+info_bold "  $app --help"

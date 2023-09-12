@@ -27,3 +27,6 @@ test-404:
 
 test-install:
 	@bash tests/install-test.sh
+
+test-mush:
+	@bash tests/mush-test.sh
