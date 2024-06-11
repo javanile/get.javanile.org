@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Set environment
-distro=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+distro=$(cat /etc/os-release | grep '^ID=' | cut -d'=' -f2)
 
 ## Remove old Docker version
 apt-get remove docker docker-engine docker.io containerd runc || true
