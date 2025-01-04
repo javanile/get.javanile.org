@@ -9,6 +9,7 @@ if [ "$1" = "--branch" ] && [ -n "$2" ]; then
   git_uri=https://github.com/javanile/mush.git
   src_dir=$HOME/.mush/registry/src/https-github-com-javanile-mush/mush
 
+  echo "Override with development branch: $2"
   mush install console
   mkdir -p "${src_dir}"
   git clone --single-branch --branch "$2" "${git_uri}" "${src_dir}/$2"
