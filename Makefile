@@ -2,6 +2,15 @@
 -include .env
 export $(shell test -f .env && cut -d= -f1 .env)
 
+## ===========
+## Development
+## ===========
+
+push:
+	@git add .
+	@git commit -am "Update"
+	@git push
+
 ## ======
 ## Remote
 ## ======

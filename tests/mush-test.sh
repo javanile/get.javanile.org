@@ -1,4 +1,6 @@
 #!/bin/bash
 set -e
 
-bash app/mush.sh
+rm -fr $HOME/.mush
+
+bash app/mush.sh --branch develop
