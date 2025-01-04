@@ -8,7 +8,7 @@ export $(shell test -f .env && cut -d= -f1 .env)
 
 push:
 	@git add .
-	@git commit -am "Update"
+	@git commit -am "Update" || true
 	@git push
 
 ## ======
