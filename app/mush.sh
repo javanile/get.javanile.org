@@ -17,7 +17,6 @@ if [ "$1" = "--branch" ] && [ -n "$2" ]; then
   cd "${src_dir}/$2"
   mush build --release
   cp bin/mush ${HOME:-/root}/.mush/bin/mush
-  rm -fr "${HOME:-/root}/.mush/registry"
   ${HOME:-/root}/.mush/bin/mush build --release
   cp bin/mush ${HOME:-/root}/.mush/bin/mush
   ${HOME:-/root}/.mush/bin/mush --version
