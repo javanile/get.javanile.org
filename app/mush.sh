@@ -19,6 +19,7 @@ if [ "$1" = "--branch" ] && [ -n "$2" ]; then
   cp bin/mush ${HOME:-/root}/.mush/bin/mush
   ${HOME:-/root}/.mush/bin/mush build --release
   cp bin/mush ${HOME:-/root}/.mush/bin/mush
+  rm -fr ../../code_dumper ../../console ../../getoptions && true
   ${HOME:-/root}/.mush/bin/mush --version
 fi
 
