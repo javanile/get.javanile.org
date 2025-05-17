@@ -16,7 +16,10 @@ if [ "$1" = "--branch" ] && [ -n "$2" ]; then
   git clone --single-branch --branch "$2" "${git_uri}" "${src_dir}/$2"
   cd "${src_dir}/$2"
   mush build --release
-  cp bin/mush ${HOME}/.mush/bin/mush
-  ${HOME}/.mush/bin/mush --version
+  cp bin/mush ${HOME:-/root}/.mush/bin/mush
+  rm -fr "${HOME:-/root}/.mush/registry"
+  ${HOME:-/root}/.mush/bin/mush build --release
+  cp bin/mush ${HOME:-/root}/.mush/bin/mush
+  ${HOME:-/root}/.mush/bin/mush --version
 fi
 
