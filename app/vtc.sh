@@ -14,24 +14,29 @@ fi
 PHP_VERSION=`php -v 2>/dev/null | head -n 1`
 echo "PHP found: $PHP_VERSION"
 
-# Determine install directory
-if [ -d "$HOME/.local/bin" ]; then
-    INSTALL_DIR="$HOME/.local/bin"
+# Detect install directory
+if [ "`id -u`" -eq 0 ]; then
+    INSTALL_DIR="/usr/local/bin"
+    echo "Running as root (sudo detected)."
 else
-    INSTALL_DIR="$HOME/bin"
-    if [ ! -d "$INSTALL_DIR" ]; then
-        mkdir -p "$INSTALL_DIR" || {
-            echo "Error: Cannot create $INSTALL_DIR"
-            exit 1
-        }
+    if [ -d "$HOME/.local/bin" ]; then
+        INSTALL_DIR="$HOME/.local/bin"
+    else
+        INSTALL_DIR="$HOME/bin"
+        if [ ! -d "$INSTALL_DIR" ]; then
+            mkdir -p "$INSTALL_DIR" || {
+                echo "Error: Cannot create $INSTALL_DIR"
+                exit 1
+            }
+        fi
     fi
 fi
 
 echo "Installing $BINARY_NAME to $INSTALL_DIR"
 
-TMP_FILE="$INSTALL_DIR/.${BINARY_NAME}.tmp.$$"
+TMP_FILE="${TMPDIR:-/tmp}/${BINARY_NAME}.tmp.$$"
 
-# Download using curl or wget
+# Download
 if command -v curl >/dev/null 2>&1; then
     curl -fsSL "$BINARY_URL" -o "$TMP_FILE" || {
         echo "Download failed."
@@ -49,30 +54,34 @@ fi
 
 chmod +x "$TMP_FILE" || {
     echo "Error: cannot make binary executable."
+    rm -f "$TMP_FILE"
     exit 1
 }
 
 mv "$TMP_FILE" "$INSTALL_DIR/$BINARY_NAME" || {
-    echo "Error: cannot move binary to destination."
+    echo "Error: cannot move binary to $INSTALL_DIR"
+    rm -f "$TMP_FILE"
     exit 1
 }
 
 echo "Installation complete."
 
-# Check PATH
-case ":$PATH:" in
-    *":$INSTALL_DIR:"*)
-        echo "$INSTALL_DIR is already in PATH."
-        ;;
-    *)
-        echo ""
-        echo "Warning: $INSTALL_DIR is not in your PATH."
-        echo "Add this line to your shell profile (~/.profile, ~/.shrc, ~/.bashrc, etc.):"
-        echo ""
-        echo "export PATH=\"$INSTALL_DIR:\$PATH\""
-        echo ""
-        ;;
-esac
+# PATH warning only for non-root installs
+if [ "`id -u`" -ne 0 ]; then
+    case ":$PATH:" in
+        *":$INSTALL_DIR:"*)
+            echo "$INSTALL_DIR is already in PATH."
+            ;;
+        *)
+            echo ""
+            echo "Warning: $INSTALL_DIR is not in your PATH."
+            echo "Add this line to your shell profile (~/.profile, ~/.shrc, ~/.bashrc, etc.):"
+            echo ""
+            echo "export PATH=\"$INSTALL_DIR:\$PATH\""
+            echo ""
+            ;;
+    esac
+fi
 
 echo ""
 echo "Run:"
